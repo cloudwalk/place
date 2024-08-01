@@ -19,7 +19,10 @@ defmodule Place.PixelStore do
 
   def handle_cast({:set_pixel, x, y, color}, state) do
     key = "#{x},#{y}"
-    {:noreply, Map.put(state, key, color)}
+    new_state = Map.put(state, key, color)
+    pixel = %{x: x, y: y, color: color}
+    Phoenix.PubSub.broadcast(Place.PubSub, "pixels", {:pixel_update, pixel})
+    {:noreply, new_state}
   end
 
   def handle_call(:get_all_pixels, _from, state) do

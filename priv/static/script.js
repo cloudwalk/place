@@ -53,7 +53,6 @@ canvas.addEventListener("click", (event) => {
   const y = Math.floor((event.clientY - rect.top) / PIXEL_SIZE);
 
   if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT) {
-    drawPixel(x, y, selectedColor);
     sendPixelToServer(x, y, selectedColor);
   }
 });
@@ -78,6 +77,33 @@ function loadPixels() {
       });
     });
 }
+
+// WebSocket connection
+const socket = new WebSocket("ws://" + window.location.host + "/ws");
+
+socket.onmessage = function (event) {
+  const pixel = JSON.parse(event.data);
+  drawPixel(pixel.x, pixel.y, pixel.color);
+};
+
+socket.onopen = function () {
+  console.log("WebSocket connection established");
+};
+
+socket.onerror = function (error) {
+  console.error("WebSocket error:", error);
+};
+
+socket.onclose = function () {
+  console.log("WebSocket connection closed");
+};
+
+// Ping to keep the connection alive
+setInterval(() => {
+  if (socket.readyState === WebSocket.OPEN) {
+    socket.send("ping");
+  }
+}, 30000);
 
 drawGrid();
 loadPixels();
