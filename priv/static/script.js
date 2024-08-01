@@ -48,14 +48,24 @@ function drawPixel(x, y, color) {
 }
 
 canvas.addEventListener("click", (event) => {
+  handlePixelClick(event, false);
+});
+
+canvas.addEventListener("contextmenu", (event) => {
+  event.preventDefault(); // Prevent the default context menu
+  handlePixelClick(event, true);
+});
+
+function handlePixelClick(event, isRightClick) {
   const rect = canvas.getBoundingClientRect();
   const x = Math.floor((event.clientX - rect.left) / PIXEL_SIZE);
   const y = Math.floor((event.clientY - rect.top) / PIXEL_SIZE);
 
   if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT) {
-    sendPixelToServer(x, y, selectedColor);
+    const color = isRightClick ? "#FFFFFF" : selectedColor;
+    sendPixelToServer(x, y, color);
   }
-});
+}
 
 function sendPixelToServer(x, y, color) {
   fetch("/pixel", {
