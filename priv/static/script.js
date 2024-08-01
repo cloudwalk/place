@@ -108,7 +108,8 @@ function loadPixels() {
 }
 
 // WebSocket connection
-const socket = new WebSocket("ws://" + window.location.host + "/ws");
+const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);
 
 socket.onmessage = function (event) {
   const pixel = JSON.parse(event.data);

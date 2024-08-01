@@ -7,7 +7,9 @@ defmodule Place.Application do
 
     children = [
       {Plug.Cowboy,
-       scheme: :http, plug: Place.Router, options: [port: 4000, dispatch: dispatch()]},
+       scheme: :http,
+       plug: Place.Router,
+       options: [port: String.to_integer(System.get_env("PORT") || "4000"), dispatch: dispatch()]},
       {Phoenix.PubSub, name: Place.PubSub},
       {Place.PixelStore, []}
     ]
