@@ -1,0 +1,32 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#color-picker {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.color-button {
+    width: 30px;
+    height: 30px;
+    margin: 0 5px;
+    border: none;
+    cursor: pointer;
+}
+
+#grid {
+    border: 1px solid #000;
+}
