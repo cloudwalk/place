@@ -2,6 +2,9 @@ defmodule Place.Application do
   use Application
 
   def start(_type, _args) do
+    :ets.new(:users_count, [:set, :public, :named_table])
+    :ets.insert(:users_count, {:count, 0})
+
     children = [
       {Plug.Cowboy,
        scheme: :http, plug: Place.Router, options: [port: 4000, dispatch: dispatch()]},

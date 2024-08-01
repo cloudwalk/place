@@ -27,6 +27,9 @@ const colors = [
   "#808080",
 ];
 
+const positionInfo = document.getElementById("position-info");
+const usersCount = document.getElementById("users-count");
+
 colors.forEach((color) => {
   const button = document.createElement("button");
   button.className = "color-button";
@@ -67,6 +70,22 @@ function handlePixelClick(event, isRightClick) {
   }
 }
 
+canvas.addEventListener("mousemove", (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.floor((event.clientX - rect.left) / PIXEL_SIZE);
+  const y = Math.floor((event.clientY - rect.top) / PIXEL_SIZE);
+
+  if (x >= 0 && x < GRID_WIDTH && y >= 0 && y < GRID_HEIGHT) {
+    positionInfo.textContent = `Position: (${x}, ${y})`;
+  } else {
+    positionInfo.textContent = "Position: (-, -)";
+  }
+});
+
+canvas.addEventListener("mouseleave", () => {
+  positionInfo.textContent = "Position: (-, -)";
+});
+
 function sendPixelToServer(x, y, color) {
   fetch("/pixel", {
     method: "POST",
@@ -106,6 +125,16 @@ socket.onerror = function (error) {
 
 socket.onclose = function () {
   console.log("WebSocket connection closed");
+};
+
+socket.onmessage = function (event) {
+  const data = JSON.parse(event.data);
+  if (data.type === "pixel_update") {
+    const pixel = data.payload;
+    drawPixel(pixel.x, pixel.y, pixel.color);
+  } else if (data.type === "users_count") {
+    usersCount.textContent = `Users: ${data.count}`;
+  }
 };
 
 // Ping to keep the connection alive
